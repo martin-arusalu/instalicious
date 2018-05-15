@@ -1,123 +1,72 @@
 import React, { Component } from 'react';
-import ModalImage from 'react-modal-image';
+import moment from 'moment';
+import 'moment/locale/et';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      acc: 'justinbieber',
-      images: []
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.setImages = this.setImages.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({
-      acc: event.target.value
-    });
-    this.setImages(event.target.value);
+    this.getOffers = this.getOffers.bind(this);
+    this.state = { offers: [] };
   }
 
   componentDidMount() {
-    this.setImages(this.state.acc);
-    this.interval = setInterval(() => {
-      this.setImages(this.state.acc);
-    }, 5000);
+    this.getOffers();
   }
 
-  setImages(acc) {
-    const oldId = this.state.images.length ? this.state.images[0].node.id : 0;
-    fetch(`https://www.instagram.com/${acc}/`)
-      .then(response => response.text()
-        .then(text => {
-          const start = text.indexOf('<script type="text/javascript">window._sharedData') + 52;
-          const fromStart = text.slice(start, text.length);
-          const end = fromStart.indexOf('</script>') - 1;
-          const data = JSON.parse(fromStart.slice(0, end));
-          const profile = data.entry_data.ProfilePage[0].graphql.user;
-          const images = profile.edge_owner_to_timeline_media.edges;
-          if (oldId !== images[0].node.id) {
-            this.setState({ images });
-          }
-        })
-      );
-  }
-
-  // TODO: Query all images.
-  /* setImages(acc = 'justinbieber') {
-    const getQueryHash = async htmlText => {
-      const start = htmlText.indexOf('/static/bundles/base/ProfilePageContainer.js');
-      const fromStart = htmlText.slice(start, htmlText.length);
-      const end = fromStart.indexOf('" as="script" type="text/javascript" crossorigin="anonymous" />');
-      const url = fromStart.slice(0, end);
-      const queryHash = await fetch('https://www.instagram.com' + url)
-        .then(response => response.text()
-          .then(text => {
-            const start = text.indexOf('o},queryId:"') + 12;
-            const fromStart = text.slice(start, text.length);
-            const end = fromStart.indexOf('"');
-            return fromStart.slice(0, end);
-          }));
-      return queryHash;
+  async getOffers() {
+    let offers = [];
+    offers.push(...this.state.offers);
+    let page = 1;
+    while (page < 5) {
+      await fetch(`http://www.pakkumised.ee/acts/offers/js_load.php?act=offers.js_load&category_id=0&page=${page}`)
+        .then(response => response.json()
+          .then(json => {
+            offers.push(...json);
+          })
+        );
+      page++;
     }
-
-    fetch(`https://www.instagram.com/${acc}/`)
-      .then(response => response.text()
-        .then(text => {
-          getQueryHash(text)
-            .then(queryHash => {
-              const start = text.indexOf('<script type="text/javascript">window._sharedData') + 52;
-              const fromStart = text.slice(start, text.length);
-              const end = fromStart.indexOf('</script>') - 1;
-              const data = JSON.parse(fromStart.slice(0, end));
-              const profile = data.entry_data.ProfilePage[0].graphql.user;
-              const images = profile.edge_owner_to_timeline_media.edges;
-              let hasNextPage = profile.edge_owner_to_timeline_media.page_info.has_next_page;
-              if (hasNextPage) {
-                const variables = {
-                  id: profile.id,
-                  first: 12,
-                  after: profile.edge_owner_to_timeline_media.page_info.end_cursor
-                }
-                const url = `https://www.instagram.com/graphql/query/?query_hash=${queryHash}&variables=${encodeURI(JSON.stringify(variables))}`;
-                const rhxGis = data.rhx_gis;
-                const signature = crypto.createHash('md5').update(`${rhxGis}:${variables}`, 'utf8').digest("hex");
-                let headers = new Headers();
-                headers.append('X-Instagram-GIS', signature);
-                fetch(url, {
-                  mode: 'no-cors',
-                  credentials: 'include',
-                  headers
-                }).then(response => console.log(response));
-              }
-            });
-        }));
-  } */
+    offers = offers.sort((prevOffer, nextOffer) => {
+      const prevDisc = prevOffer.discount_percent.slice(0, prevOffer.discount_percent.length - 1);
+      const nextDisc = nextOffer.discount_percent.slice(0, nextOffer.discount_percent.length - 1);
+      if (parseFloat(prevDisc) < parseFloat(nextDisc)) return 1;
+      else if (parseFloat(prevDisc) > parseFloat(nextDisc)) return -1;
+      else return 0;
+    });
+    this.setState({ offers });
+    console.log(offers);
+  }
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Instalicious</h1>
-          <label>
-            Username:
-          <input type="text" value={this.state.acc} onChange={this.handleChange} />
-          </label>
+          <h1 className="App-title">Sooduspakkumised</h1>
         </header>
-        <div className="images">
-          {this.state.images.map(image => {
-            let alt = 'Image';
-            if (image.node.edge_media_to_caption.edges.length > 0) {
-              alt = image.node.edge_media_to_caption.edges[0].node.text;
-            }
+        <div className="offers">
+          {this.state.offers.map(offer => {
+            moment.locale('et');
+            const startTime = moment(offer.start_time);
+            const endTime = moment(offer.end_time);
             return (
-              <div key={image.node.id} className="instaImg">
-                <ModalImage
-                  small={image.node.thumbnail_resources[2].src}
-                  large={image.node.display_url}
-                  alt={alt} />
+              <div key={offer.id} className="offer">
+                <div className="titleContainer">
+                  <h2 className="title">{offer.full_title.replace(/&amp;/g, '&')}</h2>
+                </div>
+                <h4 className="discountPercent">-{offer.discount_percent}</h4>
+                <div className="middleContent">
+                  <img className="offerImg" alt={offer.full_title} src={`http://pakkumised.ee${offer.img_src}`} />
+                  <div className="prices">
+                    <del className="regularPrice">{offer.regular_price}</del>
+                    <span className="bargain">{offer.bargain_price}</span>
+                    <span className="startTime">Algus: {startTime.format('lll')}</span>
+                    <span className="endTime">Lõpp: {endTime.format('lll')}</span>
+                  </div>
+                </div>
+                <div className="refLink" onClick={() => window.open(offer.url, '_blank')}>
+                  <span>Pakkumise lehele</span>
+                </div>
               </div>
             );
           })}
