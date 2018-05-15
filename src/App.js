@@ -59,7 +59,7 @@ class App extends Component {
                 </div>
                 <h4 className="discountPercent">-{offer.discount_percent}</h4>
                 <div className="middleContent">
-                  <img className="offerImg" alt={offer.full_title} src={`//pakkumised.ee${offer.img_src}`} />
+                  <img className="offerImg" alt={offer.full_title} src={`http://pakkumised.ee${offer.img_src}`} />
                   <div className="prices">
                     <del className="regularPrice">{offer.regular_price}</del>
                     <span className="bargain">{offer.bargain_price}</span>
