@@ -19,7 +19,7 @@ class App extends Component {
     offers.push(...this.state.offers);
     let page = 1;
     while (page < 5) {
-      await fetch(`http://www.pakkumised.ee/acts/offers/js_load.php?act=offers.js_load&category_id=0&page=${page}`)
+      await fetch(`//www.pakkumised.ee/acts/offers/js_load.php?act=offers.js_load&category_id=0&page=${page}`)
         .then(response => response.json()
           .then(json => {
             offers.push(...json);
@@ -27,6 +27,7 @@ class App extends Component {
         );
       page++;
     }
+    offers = offers.filter(offer => parseFloat(offer.discount_percent.slice(0, offer.discount_percent.length - 1)) > 0);
     offers = offers.sort((prevOffer, nextOffer) => {
       const prevDisc = prevOffer.discount_percent.slice(0, prevOffer.discount_percent.length - 1);
       const nextDisc = nextOffer.discount_percent.slice(0, nextOffer.discount_percent.length - 1);
