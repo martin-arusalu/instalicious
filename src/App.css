@@ -95,3 +95,25 @@
 .bargain {
   font-size: 40px;
 }
+
+@media all and (max-width: 500px) {
+  .App-title {
+    font-size: 1rem;
+    font-weight: 100;
+  }
+
+  .offer {
+    margin: 3%;
+    width: 100%;
+  }
+
+  .offers {
+    padding: 2%;
+  }
+}
+
+@media all and (max-width: 400px) {
+  .offerImg {
+    display: none;
+  }
+}
