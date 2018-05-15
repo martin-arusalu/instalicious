@@ -18,8 +18,8 @@ class App extends Component {
     let offers = [];
     offers.push(...this.state.offers);
     let page = 1;
-    while (page < 5) {
-      await fetch(`//www.pakkumised.ee/acts/offers/js_load.php?act=offers.js_load&category_id=0&page=${page}`)
+    while (page < 20) {
+      await fetch(`https://cryptic-headland-94862.herokuapp.com/http://www.pakkumised.ee/acts/offers/js_load.php?act=offers.js_load&category_id=0&page=${page}`)
         .then(response => response.json()
           .then(json => {
             offers.push(...json);
@@ -50,10 +50,12 @@ class App extends Component {
             moment.locale('et');
             const startTime = moment(offer.start_time);
             const endTime = moment(offer.end_time);
+            let title = offer.full_title.replace(/&amp;/g, '&');
+            title = title.replace(/&quot;/g, '\"');
             return (
               <div key={offer.id} className="offer">
                 <div className="titleContainer">
-                  <h2 className="title">{offer.full_title.replace(/&amp;/g, '&')}</h2>
+                  <h2 className="title">{title}</h2>
                 </div>
                 <h4 className="discountPercent">-{offer.discount_percent}</h4>
                 <div className="middleContent">
