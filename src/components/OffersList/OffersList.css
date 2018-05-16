@@ -1,0 +1,12 @@
+.offers {
+  padding: 5%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+@media all and (max-width: 500px) {
+  .offers {
+    padding: 2%;
+  }
+}
