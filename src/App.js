@@ -6,7 +6,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <Header title="Head pakkumised" />
+        <Header title="Head pakkumised" description="Sooduse protsendi järgi järjestatud pakkumised" />
         <OffersListController />
       </div>
     );

@@ -1,9 +1,9 @@
 .App-header {
-  background: linear-gradient(45deg, #d2c3d4, #c4bec5, #8b7883, #3c0078);
-  background-size: 800% 800%;
+  background: linear-gradient(45deg, #c4bec5, #8b7883, #3c0078);
+  background-size: 600% 600%;
   padding: 5%;
   color: #e6e7e8;
-  animation: animateBack 40s linear infinite;
+  animation: animateBack 30s linear infinite;
 }
 
 @keyframes animateBack { 
@@ -15,11 +15,17 @@
 .App-title {
   font-size: 3rem;
   font-weight: 100;
+  margin-bottom: 0;
+}
+
+.App-description {
+  font-size: 1.2rem;
+  font-weight: 400;
 }
 
 @media all and (max-width: 500px) {
   .App-title {
-    font-size: 1rem;
-    font-weight: 100;
+    font-size: 2rem;
+    font-weight: 400;
   }
 }
