@@ -1,0 +1,24 @@
+.filterMenu {
+  display: flex;
+  flex-wrap: wrap;
+}
+.orderSelect, .filterSearch {
+  padding: 8px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  background-color: #8b7883;
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  margin: 10px;
+}
+
+input::placeholder {
+  color: #e6e7e8;
+}
+
+@media all and (max-width: 500px) {
+  .orderSelect, .filterSearch {
+    flex-grow: 1;
+  }
+}

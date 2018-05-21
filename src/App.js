@@ -2,7 +2,6 @@ import React from 'react';
 import Header from './components/Header/Header';
 import OffersListController from './components/OffersListController/OffersListController';
 import offerTypes from './constants/offerTypes';
-import FilterMenu from './components/FilterMenu/FilterMenu';
 
 
 class App extends React.Component {
@@ -27,10 +26,11 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <Header title="Head pakkumised" description="Sooduse protsendi järgi järjestatud pakkumised" />
-        <FilterMenu
-          filterBy={this.state.filterBy}
+        <Header
+          title="Head pakkumised"
+          description="Filtreeri ja järjest pakkumisi:"
           orderBy={this.state.orderBy}
+          filterBy={this.state.filterBy}
           filterChange={this.handleFilterChange}
           orderChange={this.handleOrderChange}
         />

@@ -6,17 +6,17 @@ import './FilterMenu.css';
 
 const FilterMenu = props => (
   <div className="filterMenu">
-    <select value={props.orderBy} onChange={props.orderChange} >
-      <option value={offerTypes.ORDER_BY_ID_DESC}>Uuemad enne</option>
-      <option value={offerTypes.ORDER_BY_ID_ASC}>Vanemad enne</option>
-      <option value={offerTypes.ORDER_BY_PERCENTAGE_DESC}>Suurim soodusprotsent</option>
-    </select>
     <DebounceInput
       debounceTimeout={300}
       type="text"
       onChange={props.filterChange}
-      placeholder="Otsi pealkirja järgi"
+      placeholder="Otsi pealkirjast"
       className="filterSearch" />
+    <select className="orderSelect" value={props.orderBy} onChange={props.orderChange} >
+      <option value={offerTypes.ORDER_BY_ID_DESC}>Uuemad enne</option>
+      <option value={offerTypes.ORDER_BY_ID_ASC}>Vanemad enne</option>
+      <option value={offerTypes.ORDER_BY_PERCENTAGE_DESC}>Suurim soodusprotsent</option>
+    </select>
   </div>
 );
 
