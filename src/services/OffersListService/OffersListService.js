@@ -8,6 +8,14 @@ export const orderByPercentage = (offers, descending) => {
   });
 }
 
+export const orderById = (offers, descending) => {
+  return offers.sort((prevOffer, nextOffer) => {
+    if (prevOffer.id < nextOffer.id) return descending ? 1 : -1;
+    else if (prevOffer.id > nextOffer.id) return descending ? -1 : 1;
+    else return 0;
+  });
+}
+
 export const getPage = async page => {
   return fetch(`https://cryptic-headland-94862.herokuapp.com/http://www.pakkumised.ee/acts/offers/js_load.php?act=offers.js_load&category_id=0&page=${page}`)
     .then(response => response.json()
