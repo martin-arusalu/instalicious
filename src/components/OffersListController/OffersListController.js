@@ -10,27 +10,30 @@ class OffersListController extends React.Component {
   constructor(props) {
     super(props);
     this.getOffers = this.getOffers.bind(this);
+    this.orderFilterOffers = this.orderFilterOffers.bind(this);
     this.state = {
       loading: true,
-      offers: []
+      allOffers: [],
+      filteredOffers: []
     };
-    this.PAGES_TO_RENDER = 2;
+    this.PAGES_TO_RENDER = 10;
   }
 
   componentDidMount() {
+    this.setState({ loading: true });
     this.getOffers();
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.orderBy !== this.props.orderBy
       || nextProps.filterBy !== this.props.filterBy) {
-        this.getOffers();
+      this.setState({ loading: true });
+      this.orderFilterOffers(nextProps);
     }
   }
 
   async getOffers() {
     let offers = [];
-    this.setState({ offers: [], loading: true });
     const queryPages = async page => {
       if (page <= this.PAGES_TO_RENDER) {
         await getPage(page).then(json => offers.push(...json));
@@ -39,34 +42,34 @@ class OffersListController extends React.Component {
     }
 
     await queryPages(1);
-    offers = await this.orderFilterOffers(offers);
-    console.log('offers2', offers);
-    this.setState({ offers, loading: false });
+    this.setState({ allOffers: offers });
+    this.orderFilterOffers();
   }
 
-  orderFilterOffers(offers) {
-    let filteredOffers = offers;
+  orderFilterOffers(props = this.props) {
+    let filteredOffers = this.state.allOffers;
+
     filteredOffers = filteredOffers.filter(offer => parseFloat(offer.discount_percent.slice(0, offer.discount_percent.length - 1)) > 0);
-    if (this.props.filterBy.length > 0) {
-      filteredOffers = filteredOffers.filter(offer => offer.full_title.toLowerCase().indexOf(this.props.filterBy.toLowerCase()) >= 0);
+    if (props.filterBy.length > 0) {
+      filteredOffers = filteredOffers.filter(offer => offer.full_title.toLowerCase().indexOf(props.filterBy.toLowerCase()) >= 0);
     }
 
-    if (this.props.orderBy === offerTypes.ORDER_BY_ID_DESC) {
+    if (props.orderBy === offerTypes.ORDER_BY_ID_DESC) {
       filteredOffers = orderById(filteredOffers, true);
-    } else if (this.props.orderBy === offerTypes.ORDER_BY_ID_ASC) {
+    } else if (props.orderBy === offerTypes.ORDER_BY_ID_ASC) {
       filteredOffers = orderById(filteredOffers, false);
     } else {
       filteredOffers = orderByPercentage(filteredOffers, true);
     }
-
-    return filteredOffers;
+    
+    this.setState({ filteredOffers, loading: false });
   }
 
   render() {
     return (
       <div>
         {this.state.loading && <ReactLoading className="loadingScreen" type={'spinningBubbles'} color={'#3c0078'} />}
-        <OffersList offers={this.state.offers} />
+        <OffersList offers={this.state.filteredOffers} />
       </div>
     );
   }

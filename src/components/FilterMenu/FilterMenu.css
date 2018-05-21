@@ -7,10 +7,14 @@
   font-family: 'Tajawal', sans-serif;
   font-size: 18px;
   font-weight: 400;
-  background-color: #8b7883;
+  background-color: rgba(139,120,131, 0.5);
   border: 1px solid rgba(255,255,255,0.1);
   color: #fff;
   margin: 10px;
+}
+
+.orderSelect > option {
+  background-color: rgba(139,120,131, 0.9);
 }
 
 input::placeholder {
